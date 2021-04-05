@@ -1,0 +1,16 @@
+################################################################################
+## File      : @PROJECT_NAME@Config.cmake
+## Contents  : cmake package configuration file
+##
+## Author(s) : Frederic Gerard - mailfge@gmail.com
+## URL       : https://github.com/TheBigFred/libSocket
+##
+##-----------------------------------------------------------------------------
+##  LGPL V3.0 - https://www.gnu.org/licences/lgpl-3.0.txt
+##-----------------------------------------------------------------------------
+################################################################################
+
+include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@_dependencies.cmake)
+
+set(@PROJECT_NAME@_FOUND TRUE)

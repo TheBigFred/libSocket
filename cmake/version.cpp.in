@@ -1,0 +1,70 @@
+////////////////////////////////////////////////////////////////////////////////
+// File      : version.cpp
+// Contents  : These functions provide the lib version at runtime
+//
+// Author(s) : Frederic Gerard - mailfge@gmail.com
+// URL       : https://github.com/TheBigFred/libSocket
+//
+//-----------------------------------------------------------------------------
+//  LGPL V3.0 - https://www.gnu.org/licences/lgpl-3.0.txt
+//-----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+
+#include <cstdint>
+
+#cmakedefine USE_TWEAK_AS_DATE
+#cmakedefine USE_TWEAK
+
+namespace @PROJECT_NAME@ {
+
+#if defined(USE_TWEAK) && !defined(USE_TWEAK_AS_DATE)
+   void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date)
+#else
+   void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date)
+#endif
+{
+   if(name)
+      *name = "@PROJECT_NAME@";
+
+   if(major)
+      *major = @PROJECT_VERSION_MAJOR@;
+
+   if(minor)
+      *minor = @PROJECT_VERSION_MINOR@;
+
+   if(build)
+      *build = @PROJECT_VERSION_PATCH@;
+
+#ifdef USE_TWEAK_AS_DATE
+
+   if(date)
+      *date = "@PROJECT_VERSION_TWEAK@";
+
+#else
+
+#   ifdef USE_TWEAK
+   if (tweak)
+      *tweak = @PROJECT_VERSION_TWEAK@;
+#   endif
+
+   if(date)
+      *date = __DATE__;
+
+#endif
+}
+
+const char* versionStr()
+{
+#ifdef USE_TWEAK_AS_DATE
+   return "@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@ - @PROJECT_VERSION_TWEAK@";
+#else
+
+#  ifdef USE_TWEAK
+   return "@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@.@PROJECT_VERSION_TWEAK@ - " __DATE__;
+#  else
+   return "@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@ - __DATE__";  
+#  endif
+#endif
+}
+
+}  // namespace @PROJECT_NAME@

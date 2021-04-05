@@ -1,0 +1,16 @@
+////////////////////////////////////////////////////////////////////////////////
+// File      : config.h
+// Contents  : These functions provide the lib version at runtime
+//
+// Author(s) : Frederic Gerard - mailfge@gmail.com
+// URL       : https://github.com/TheBigFred/libSocket
+//
+//-----------------------------------------------------------------------------
+//  LGPL V3.0 - https://www.gnu.org/licences/lgpl-3.0.txt
+//-----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#cmakedefine IGMP_REQ_ARRAY_SIZE @IGMP_REQ_ARRAY_SIZE@
+#cmakedefine WSABUFF_ARRAY_SIZE @WSABUFF_ARRAY_SIZE@
