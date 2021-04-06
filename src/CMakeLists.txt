@@ -19,6 +19,7 @@ list(APPEND PRIVATE_INC_FILES
 
 list(APPEND PUBLIC_INC_FILES
    ${CMAKE_CURRENT_SOURCE_DIR}/platform.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/poll.h
    ${CMAKE_CURRENT_SOURCE_DIR}/socket.h
    ${CMAKE_CURRENT_SOURCE_DIR}/socket_addr.h
    ${CMAKE_CURRENT_SOURCE_DIR}/socket_portability.h
@@ -139,7 +140,7 @@ write_basic_package_version_file(
 configure_package_config_file(
    ${PROJECT_SOURCE_DIR}/cmake/Config.cmake.in
    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-   INSTALL_DESTINATION ${PROJECT_NAME}/cmake
+   INSTALL_DESTINATION cmake
 )
 
 if (DevelPackage)
@@ -148,7 +149,7 @@ install(
       ${PUBLIC_INC_FILES}
       ${CMAKE_CURRENT_SOURCE_DIR}/export.h
    DESTINATION
-      ${PROJECT_NAME}/include/${PROJECT_NAME}
+      include/${PROJECT_NAME}
 )
 
 install(
@@ -158,13 +159,13 @@ install(
    EXPORT
       ${PROJECT_NAME}
    RUNTIME
-      DESTINATION         ${PROJECT_NAME}/${CMAKE_INSTALL_BINDIR}
+      DESTINATION         ${CMAKE_INSTALL_BINDIR}
       COMPONENT           ${PROJECT_NAME}_RunTime
    LIBRARY
-      DESTINATION         ${PROJECT_NAME}/${CMAKE_INSTALL_LIBDIR}
+      DESTINATION         ${CMAKE_INSTALL_LIBDIR}
       COMPONENT           ${PROJECT_NAME}_RunTime
    ARCHIVE
-      DESTINATION         ${PROJECT_NAME}/${CMAKE_INSTALL_LIBDIR}
+      DESTINATION         ${CMAKE_INSTALL_LIBDIR}
       COMPONENT           ${PROJECT_NAME}_Development
 )
 
@@ -172,7 +173,7 @@ install(
    EXPORT
       ${PROJECT_NAME}
    DESTINATION
-      ${PROJECT_NAME}/cmake
+      cmake
 )
 
 install(
@@ -180,30 +181,31 @@ install(
       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
    DESTINATION
-      ${PROJECT_NAME}/cmake
+      cmake
 )
 
 install(
    FILES
       ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/dependencies.cmake
    DESTINATION
-      ${PROJECT_NAME}/cmake
+      cmake
    RENAME
       ${PROJECT_NAME}_dependencies.cmake
 )
 
 else(DevelPackage)
 
+if (STANDALONE_${PROJECT_NAME})
 install(
    TARGETS
       ${LIBNAME_SHARED}
    EXPORT
       ${PROJECT_NAME}
    LIBRARY
-      DESTINATION         ${PROJECT_NAME}/${CMAKE_INSTALL_LIBDIR}
+      DESTINATION         ${CMAKE_INSTALL_LIBDIR}
       COMPONENT           ${PROJECT_NAME}_RunTime
 )
-
+endif()
 endif(DevelPackage)
 
 # ==============================================================================
@@ -223,7 +225,8 @@ install(
    FILES
       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.so.debug
    DESTINATION
-      ${PROJECT_NAME}/${CMAKE_INSTALL_LIBDIR}
+      ${CMAKE_INSTALL_LIBDIR}
 )
 endif(DevelPackage)
 endif()
+

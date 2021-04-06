@@ -18,6 +18,9 @@ set(LIBNAME Socket)
 set(LIBNAME_STATIC ${LIBNAME}-static)
 set(LIBNAME_SHARED ${LIBNAME}-shared)
 
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LC)
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
+
 # ==============================================================================
 # == Standalone build or Global CMakeLists
 # ==============================================================================

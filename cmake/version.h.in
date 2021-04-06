@@ -22,12 +22,12 @@
 namespace @PROJECT_NAME@
 {
 #if defined(USE_TWEAK) && !defined(USE_TWEAK_AS_DATE)
-   @PROJECT_NAME@_EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date);
+   @PROJECT_NAME_UC@_EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date);
 #else
-   @PROJECT_NAME@_EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date);
+   @PROJECT_NAME_UC@_EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date);
 #endif
 
-   @PROJECT_NAME@_EXPORT const char* versionStr();
+   @PROJECT_NAME_UC@_EXPORT const char* versionStr();
 }
 
 #endif /* @PROJECT_NAME@_LIBVERSION_H_ */
