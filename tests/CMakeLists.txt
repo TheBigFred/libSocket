@@ -84,9 +84,13 @@ endforeach(item)
 # == Generate an archive.tar for the SocketSTREAM send_recv_file unittest
 # ==============================================================================
 
+if (MSVC)
+   set(EXTENSION ".exe")
+endif()
+
 add_custom_command (
    TARGET ${PROJECT_TESTS} POST_BUILD
-   COMMAND tar -cf archive.tar ${PROJECT_TESTS}
+   COMMAND tar -cf archive.tar ${PROJECT_TESTS}${EXTENSION}
    DEPENDS
    WORKING_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}
 )

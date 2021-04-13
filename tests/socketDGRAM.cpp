@@ -105,18 +105,18 @@ TEST_F(SocketDGRAM_Fixture, send_recv_ping_pong)
    }
 }
 
-void Send_Scatter_Gather_Thread(const std::string &Address, uint16_t Port)
+void Send_Scatter_Gather_Thread(const std::string& Address, uint16_t Port)
 {
-   uint8_t buffer1[100] = {1};
-   uint8_t buffer2[100] = {2};
+   uint8_t buffer1[32] = {};
+   uint8_t buffer2[1024] = {};
 
    iovec Iov[2] = {};
    msghdr msg = {};
 
-   Iov[0].iov_base = (void *)buffer1;
-   Iov[0].iov_len = 100;
-   Iov[1].iov_base = (void *)buffer2;
-   Iov[1].iov_len = 100;
+   Iov[0].iov_base = (void*)buffer1;
+   Iov[0].iov_len = 32;
+   Iov[1].iov_base = (void*)buffer2;
+   Iov[1].iov_len = 1024;
 
    msg.msg_iov = Iov;
    msg.msg_iovlen = 2;
@@ -133,22 +133,30 @@ void Send_Scatter_Gather_Thread(const std::string &Address, uint16_t Port)
 
    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-   ASSERT_EQ(sockSnd.send(msg), 200);
+   for (uint32_t i = 0; i < 1000; i++)
+   {
+      memset(buffer1, i % 255, 32);
+      memset(buffer2, (i + 1) % 255, 1024);
+      ASSERT_EQ(sockSnd.send(msg), 32 + 1024);
+   }
+
+   strcpy((char*)buffer1, "STOP");
+   ASSERT_EQ(sockSnd.send(msg), 32 + 1024);
    ASSERT_EQ(sockSnd.close(), 0);
 }
 
 void Recv_Scatter_Gather_Thread(uint16_t Port)
 {
-   uint8_t buffer1[100] = {};
-   uint8_t buffer2[100] = {};
+   uint8_t buffer1[32] = {};
+   uint8_t buffer2[1200] = {};
 
    iovec Iov[2] = {};
    msghdr msg = {};
 
-   Iov[0].iov_base = (void *)buffer1;
-   Iov[0].iov_len = 100;
-   Iov[1].iov_base = (void *)buffer2;
-   Iov[1].iov_len = 100;
+   Iov[0].iov_base = (void*)buffer1;
+   Iov[0].iov_len = 32;
+   Iov[1].iov_base = (void*)buffer2;
+   Iov[1].iov_len = 1200;
 
    msg.msg_iov = Iov;
    msg.msg_iovlen = 2;
@@ -164,7 +172,21 @@ void Recv_Scatter_Gather_Thread(uint16_t Port)
    msg.msg_name = &sa;
    msg.msg_namelen = sizeof(sa);
 
-   ASSERT_EQ(sockRcv.recv(msg), 200);
+   uint32_t i = 0;
+   while (1)
+   {
+      ASSERT_EQ(sockRcv.recv(msg), 32 + 1024);
+      if (strcmp((char*)buffer1, "STOP") != 0)
+      {
+         ASSERT_EQ(buffer1[0], buffer1[31]);
+         ASSERT_EQ(buffer2[0], buffer2[1023]);
+         ASSERT_EQ(buffer2[0], (buffer1[0] + 1) % 255);
+      }
+      else
+         break;
+      i++;
+   }
+   ASSERT_EQ(i, 1000);
    ASSERT_EQ(sockRcv.close(), 0);
 }
 
