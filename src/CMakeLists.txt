@@ -212,7 +212,7 @@ endif(DevelPackage)
 # == Striping
 # ==============================================================================
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release" AND NOT MSVC)
 
 add_custom_command(TARGET ${LIBNAME_SHARED} POST_BUILD
    COMMAND ${CMAKE_OBJCOPY} --only-keep-debug ${PROJECT_NAME}.so ${PROJECT_NAME}.so.debug
