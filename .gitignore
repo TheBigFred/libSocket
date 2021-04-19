@@ -1,5 +1,6 @@
 .vs
 .vscode
+_build*
 out
 src/export.h
 src/config.h

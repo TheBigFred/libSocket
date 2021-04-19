@@ -38,6 +38,7 @@ function(${PROJECT_NAME}_build_flags target_name)
    # -I
    target_include_directories(${target_name}
       PUBLIC
+         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
          $<INSTALL_INTERFACE:include>
    )
