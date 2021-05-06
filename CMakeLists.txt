@@ -55,7 +55,6 @@ option(USE_TWEAK_AS_DATE            "Use project Tweak number as BCD date"  OFF)
 option(USE_TWEAK                    "Show project Tweak number in version fonction" OFF)
 option(ENABLE_TEST_${PROJECT_NAME}  "Enable Unit tests"                     OFF)
 option(ENABLE_DOC_${PROJECT_NAME}   "Generate Doxygen documentation"        OFF)
-option(DevelPackage                 "Generate developpment package"         OFF)
 
 set(IGMP_REQ_ARRAY_SIZE 10 CACHE STRING "Igmp request array size")
 if (MSVC)
