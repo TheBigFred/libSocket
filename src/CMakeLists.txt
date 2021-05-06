@@ -125,6 +125,20 @@ target_link_libraries(${LIBNAME_SHARED}
 )
 
 # ==============================================================================
+# == Striping
+# ==============================================================================
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release" AND NOT MSVC)
+
+   add_custom_command(TARGET ${LIBNAME_SHARED} POST_BUILD
+      COMMAND ${CMAKE_OBJCOPY} --only-keep-debug ${PROJECT_NAME}.so ${PROJECT_NAME}.so.debug
+      COMMAND ${CMAKE_OBJCOPY} --strip-debug ${PROJECT_NAME}.so
+      COMMAND ${CMAKE_OBJCOPY} --add-gnu-debuglink=${PROJECT_NAME}.so.debug ${PROJECT_NAME}.so
+   )
+
+endif()
+
+# ==============================================================================
 # == Install Directives
 # ==============================================================================
 
@@ -143,15 +157,6 @@ configure_package_config_file(
    INSTALL_DESTINATION cmake
 )
 
-if (DevelPackage)
-install(
-   FILES
-      ${PUBLIC_INC_FILES}
-      ${CMAKE_CURRENT_SOURCE_DIR}/export.h
-   DESTINATION
-      include/${PROJECT_NAME}
-)
-
 install(
    TARGETS
       ${LIBNAME_SHARED}
@@ -160,13 +165,23 @@ install(
       ${PROJECT_NAME}
    RUNTIME
       DESTINATION         ${CMAKE_INSTALL_BINDIR}
-      COMPONENT           ${PROJECT_NAME}_RunTime
+      COMPONENT           ${PROJECT_NAME}_Runtime
    LIBRARY
       DESTINATION         ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT           ${PROJECT_NAME}_RunTime
+      COMPONENT           ${PROJECT_NAME}_Library
    ARCHIVE
       DESTINATION         ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT           ${PROJECT_NAME}_Development
+      COMPONENT           ${PROJECT_NAME}_Archive
+)
+
+install(
+   FILES
+      ${PUBLIC_INC_FILES}
+      ${CMAKE_CURRENT_SOURCE_DIR}/export.h
+   DESTINATION
+      include/${PROJECT_NAME}
+   COMPONENT
+      ${PROJECT_NAME}_Headers
 )
 
 install(
@@ -174,6 +189,8 @@ install(
       ${PROJECT_NAME}
    DESTINATION
       cmake
+   COMPONENT
+      ${PROJECT_NAME}_CMake
 )
 
 install(
@@ -182,6 +199,8 @@ install(
       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
    DESTINATION
       cmake
+   COMPONENT
+      ${PROJECT_NAME}_CMake
 )
 
 install(
@@ -191,42 +210,18 @@ install(
       cmake
    RENAME
       ${PROJECT_NAME}_dependencies.cmake
+   COMPONENT
+      ${PROJECT_NAME}_CMake
 )
-
-else(DevelPackage)
-
-if (STANDALONE_${PROJECT_NAME})
-install(
-   TARGETS
-      ${LIBNAME_SHARED}
-   EXPORT
-      ${PROJECT_NAME}
-   LIBRARY
-      DESTINATION         ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT           ${PROJECT_NAME}_RunTime
-)
-endif()
-endif(DevelPackage)
-
-# ==============================================================================
-# == Striping
-# ==============================================================================
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release" AND NOT MSVC)
-
-add_custom_command(TARGET ${LIBNAME_SHARED} POST_BUILD
-   COMMAND ${CMAKE_OBJCOPY} --only-keep-debug ${PROJECT_NAME}.so ${PROJECT_NAME}.so.debug
-   COMMAND ${CMAKE_OBJCOPY} --strip-debug ${PROJECT_NAME}.so
-   COMMAND ${CMAKE_OBJCOPY} --add-gnu-debuglink=${PROJECT_NAME}.so.debug ${PROJECT_NAME}.so
-)
-
-if (DevelPackage)
-install(
-   FILES
-      ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.so.debug
-   DESTINATION
-      ${CMAKE_INSTALL_LIBDIR}
-)
-endif(DevelPackage)
+   install(
+      FILES
+         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.so.debug
+      DESTINATION
+         ${CMAKE_INSTALL_LIBDIR}
+      COMPONENT
+         ${PROJECT_NAME}_Debug
+   )
 endif()
 
