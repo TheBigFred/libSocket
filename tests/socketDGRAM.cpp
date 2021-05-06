@@ -224,8 +224,12 @@ void RecvThread(const std::string &IfAddress, const std::string &GroupAddress, u
    ASSERT_NE(sockRcv.open(), INVALID_SOCKET);
    ASSERT_EQ(sockRcv.bind(), 0);
 
-   auto ifName = IfName(IfAddress);
-   auto index = IfIndex(ifName);
+   int index = 0;
+   if (!IfAddress.empty() && IfAddress.compare("0.0.0.0"))
+   {
+      auto ifName = IfName(IfAddress);
+      index = IfIndex(ifName);
+   }
    ASSERT_EQ(sockRcv.igmpJoin(GroupAddress, index), 0);
 
    char *buffer[50] = {};
