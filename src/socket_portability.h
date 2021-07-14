@@ -81,19 +81,4 @@
       int msg_flags;		/* Flags on received message.  */
     };
 
-#   ifdef DEBUG
-    struct ip_mreq
-    {
-       IN_ADDR imr_multiaddr;
-       IN_ADDR imr_interface;
-    };
-
-    struct ip_mreq_source
-    {
-       IN_ADDR imr_multiaddr;
-       IN_ADDR imr_sourceaddr;
-       IN_ADDR imr_interface;
-    };
-#   endif
-
 #endif
