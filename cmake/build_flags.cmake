@@ -31,7 +31,7 @@ function(${PROJECT_NAME}_build_flags target_name)
    # -D
    target_compile_definitions(${target_name}
       PUBLIC
-         $<$<CONFIG:DEBUG>:_DEBUG=1>
+         $<$<CONFIG:DEBUG>:DEBUG=1>
          $<$<CONFIG:RELEASE>:NDEBUG=1>
    )
 
