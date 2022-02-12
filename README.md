@@ -1,12 +1,10 @@
 # libSocket is a portable low-level socket library.
 
-The purpose of this library is to wrap the BSD & winsock2 API
-to hidde difference between the two API.
+The purpose of this library is to wrap the BSD & winsock2 API to hidde the differences between the two APIs.
 
-Winsoc2 API is similare but not fully compatible with the BSD API,
-which is a pity because that was its aim.
+The Winsock2 API is similar but not fully compatible with the BSD API, which is a shame because that was its purpose.
 
-This library aims:
+The purpose of this library is to:
 
 * To support both IPV4 and IPV6 addresses.
 * Never allocate memory dynamically.
@@ -24,6 +22,7 @@ This library is tested on
 This library use cmake.
 
 * Either you build and install this lib
+
 ```
    git clone https://github.com/TheBigFred/libSocket.git
    mkdir build
