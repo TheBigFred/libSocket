@@ -250,13 +250,13 @@ std::string IpAddr(const std::string& ifName, int domain/*=AF_INET*/)
                //interface found
                auto family = iap->ifa_addr->sa_family;
                if (family == AF_INET) {
-                  struct in_addr sa = ((struct sockaddr_in*)&iap->ifa_addr)->sin_addr;
+                  struct in_addr sa = ((struct sockaddr_in*)iap->ifa_addr)->sin_addr;
                   inet_ntop(family, &sa, buf, sizeof(buf));
 
                }
                else
                {
-                  auto sa = ((struct sockaddr_in6*)&iap->ifa_addr)->sin6_addr;
+                  auto sa = ((struct sockaddr_in6*)iap->ifa_addr)->sin6_addr;
                   inet_ntop(family, &sa, buf, sizeof(buf));
                }
                ipaddr.append(buf);
