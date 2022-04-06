@@ -259,7 +259,7 @@ uint16_t Socket::getPort() const
  *
  * @return socketaddr : the current socketaddr value.
  */
-socketaddr SocketNC::getSocketaddr() const noexcept
+socketaddr Socket::getSocketaddr() const noexcept
 {
    return mAddr;
 }
@@ -490,7 +490,7 @@ int Socket::send(const msghdr &msg) const
  * @param msg : the buffers collection.
  * @return int : zero on success.
  */
-int SocketNC::recv(struct msghdr &msg)
+int Socket::recv(struct msghdr &msg)
 {
 #ifdef OS_UNIX
    return recvmsg(mSock, &msg, mRecvFlags);

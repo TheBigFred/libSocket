@@ -35,5 +35,6 @@ socketaddr  LIBSOCKET_EXPORT SockAddr(const std::string& node, int domain = AF_U
 socketaddr  LIBSOCKET_EXPORT SockAddr(const std::string& node, uint16_t port, int domain=AF_UNSPEC);
 socketaddr  LIBSOCKET_EXPORT SockAddr(const std::string& node, uint16_t port, addrinfo&);
 std::string LIBSOCKET_EXPORT IfName(const std::string& ipAddr);
+std::string LIBSOCKET_EXPORT IfName(int IfIndex);
 std::string LIBSOCKET_EXPORT IpAddr(const std::string& ifName, int domain=AF_INET);
 int         LIBSOCKET_EXPORT IfIndex(const std::string& IfName);
