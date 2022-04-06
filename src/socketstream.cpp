@@ -161,6 +161,12 @@ int SocketSTREAM::KeepAlive(bool enable /*=true*/) noexcept
    int n = enable;
    return setsockopt(mSock, SOL_SOCKET, SO_KEEPALIVE, (const char *)&n, sizeof(n));
 }
+
+int SocketSTREAM::send(const msghdr &message) const noexcept
+{
+  return Socket::send(message);
+}
+
 int SocketSTREAM::send(const void *buffer, uint32_t size) const noexcept
 {
    if (buffer == nullptr || size == 0)
@@ -226,6 +232,11 @@ int SocketSTREAM::send(int64_t data) const noexcept
 {
    int64_t d = htonll(data);
    return ::send(mSock, CPCHAR_WSCAST(&d), sizeof(int64_t), mSendFlags);
+}
+
+int SocketSTREAM::recv(msghdr &message) noexcept
+{
+  return Socket::recv(message);
 }
 
 int SocketSTREAM::recv(void *buffer, uint32_t size) noexcept
