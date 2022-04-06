@@ -442,7 +442,7 @@ void Socket::resetRecvFlags() noexcept
  * @param msg : the buffers collection to send.
  * @return int : zero on success.
  */
-int Socket::send(const msghdr &msg) const
+int Socket::send(const msghdr &msg) const noexcept
 {
 #ifdef OS_UNIX
    return sendmsg(mSock, &msg, mSendFlags);
@@ -490,7 +490,7 @@ int Socket::send(const msghdr &msg) const
  * @param msg : the buffers collection.
  * @return int : zero on success.
  */
-int Socket::recv(struct msghdr &msg)
+int Socket::recv(msghdr &msg) noexcept
 {
 #ifdef OS_UNIX
    return recvmsg(mSock, &msg, mRecvFlags);

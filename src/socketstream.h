@@ -27,7 +27,7 @@ public:
    int connect() noexcept;
    int KeepAlive(bool enable = true) noexcept;
 
-   int send(const msghdr &message) const;
+   int send(const msghdr &message) const noexcept override;
    int send(const void *buffer, uint32_t size) const noexcept override;
    int send(const std::string &binary) const noexcept override;
    int send(const char *txt) const noexcept override;
@@ -40,7 +40,7 @@ public:
    int send(int32_t data) const noexcept override;
    int send(int64_t data) const noexcept override;
 
-   int recv(struct msghdr &message) override;
+   int recv(msghdr &message) noexcept override;
    int recv(void *buffer, uint32_t size) noexcept override;
    int recv(uint8_t &data) noexcept override;
    int recv(uint16_t &data) noexcept override;

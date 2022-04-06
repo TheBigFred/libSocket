@@ -61,7 +61,7 @@ public:
    void resetSendFlags() noexcept;
    void resetRecvFlags() noexcept;
 
-   virtual int send(const msghdr &message) const;
+   virtual int send(const msghdr &message) const noexcept;
    virtual int send(const void *buffer, uint32_t size) const noexcept = 0;
    virtual int send(const std::string &binary) const noexcept = 0;
    virtual int send(const char *txt) const noexcept = 0;
@@ -74,7 +74,7 @@ public:
    virtual int send(int32_t data) const noexcept = 0;
    virtual int send(int64_t data) const noexcept = 0;
 
-   virtual int recv(struct msghdr &message);
+   virtual int recv(msghdr &message) noexcept;
    virtual int recv(void *buffer, uint32_t size) noexcept = 0;
    virtual int recv(uint8_t &data) noexcept = 0;
    virtual int recv(uint16_t &data) noexcept = 0;

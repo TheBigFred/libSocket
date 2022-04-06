@@ -165,6 +165,11 @@ int SocketDGRAM::igmpLeave()
    return rc;
 }
 
+int SocketDGRAM::send(const msghdr &message) const noexcept
+{
+  return Socket::send(message);
+}
+
 int SocketDGRAM::send(const void *buffer, uint32_t size) const noexcept
 {
    if (buffer == nullptr || size == 0)
@@ -229,6 +234,11 @@ int SocketDGRAM::send(int64_t data) const noexcept
 {
    int64_t d = htonll(data);
    return sendto(mSock, CPCHAR_WSCAST(&d), sizeof(int64_t), mSendFlags, &mAddr.sa, mAddr.size);
+}
+
+int SocketDGRAM::recv(msghdr &message) noexcept
+{
+  return Socket::recv(message);
 }
 
 int SocketDGRAM::recv(void *buffer, uint32_t size) noexcept
