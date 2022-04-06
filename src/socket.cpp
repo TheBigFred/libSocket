@@ -255,6 +255,16 @@ uint16_t Socket::getPort() const
 }
 
 /**
+ * @brief Readback the socket address.
+ *
+ * @return socketaddr : the current socketaddr value.
+ */
+socketaddr Socket::getSocketaddr() const noexcept
+{
+   return mAddr;
+}
+
+/**
  * @brief This method encapsulates errno under unix and WSAGetLastError under Windows.
  * 
  * @return int : errno value or WSAGetLastError value
@@ -321,7 +331,7 @@ int Socket::setSendTimeout(uint32_t s, uint32_t ms) noexcept
 }
 
 /**
- * @brief Get the send/sento flags bitmask
+ * @brief Get the send/sendto flags bitmask
  * 
  * @return int : The send flags bitmask
  */
@@ -343,7 +353,7 @@ int Socket::getRecvFlags() noexcept
 /**
  * @brief Add a bit ot the current send bitmask.
  * 
- * @param value : A valid send/sento flag.
+ * @param value : A valid send/sendto flag.
  */
 void Socket::setSendFlag(int value) noexcept
 {
@@ -416,4 +426,92 @@ void Socket::resetSendFlags() noexcept
 void Socket::resetRecvFlags() noexcept
 {
    mRecvFlags = 0;
+}
+
+/**
+ * @brief Scatter / Gather
+ *
+ * This method encapsulates the sendmsg BSD system call and
+ * the winsoc WSASendMsg. 
+ *
+ * The winsoc API does not use the msghdr struct,
+ * thus we have to translate msghdr struct to WSAMSG struct.
+ * To avoid dynamic allocation, we use a fix array of 10 WSABUFF.
+ * You can override this WSABUFF_ARRAY_SIZE in the cmake cache.
+ * 
+ * @param msg : the buffers collection to send.
+ * @return int : zero on success.
+ */
+int Socket::send(const msghdr &msg) const noexcept
+{
+#ifdef OS_UNIX
+   return sendmsg(mSock, &msg, mSendFlags);
+#elif defined OS_WINDOWS
+
+   if (WSABUFF_ARRAY_SIZE < msg.msg_iovlen)
+      return -1;
+
+   WSAMSG Msg = {};
+   Msg.name = (LPSOCKADDR)msg.msg_name;
+   Msg.namelen = msg.msg_namelen;
+   Msg.Control.buf = (char *)msg.msg_control;
+   Msg.Control.len = msg.msg_controllen;
+
+   WSABUF piov[WSABUFF_ARRAY_SIZE];
+   for (uint32_t i = 0; i < msg.msg_iovlen; i++)
+   {
+      piov[i].buf = (char *)msg.msg_iov[i].iov_base;
+      piov[i].len = msg.msg_iov[i].iov_len;
+   }
+   Msg.lpBuffers = piov;
+   Msg.dwBufferCount = msg.msg_iovlen;
+   Msg.dwFlags = msg.msg_flags;
+
+   DWORD nbBytesSent = 0;
+   auto rc = WSASendMsg(mSock, &Msg, mSendFlags, &nbBytesSent, nullptr, nullptr);
+
+   if (rc == SOCKET_ERROR)
+      return -1;
+   return nbBytesSent;
+#endif
+}
+
+/**
+ * @brief Scatter / Gather
+ *
+ * This method encapsulates the recvmsg BSD system call and
+ * the winsoc WSARecvFrom. 
+ *
+ * The winsoc API does not use the msghdr struct,
+ * thus we have to translate msghdr struct to WSAMSG struct.
+ * To avoid dynamic allocation, we use a fix array of 10 WSABUFF.
+ * You can override this WSABUFF_ARRAY_SIZE in the cmake cache.
+ * 
+ * @param msg : the buffers collection.
+ * @return int : zero on success.
+ */
+int Socket::recv(msghdr &msg) noexcept
+{
+#ifdef OS_UNIX
+   return recvmsg(mSock, &msg, mRecvFlags);
+#elif defined OS_WINDOWS
+
+   WSABUF piov[WSABUFF_ARRAY_SIZE] = {};
+   for (uint32_t i = 0; i < msg.msg_iovlen; i++)
+   {
+      piov[i].buf = (char *)msg.msg_iov[i].iov_base;
+      piov[i].len = msg.msg_iov[i].iov_len;
+   }
+
+   DWORD nbBytesRecvd = 0;
+   auto rc = WSARecvFrom(mSock, piov, msg.msg_iovlen,
+                         &nbBytesRecvd, (LPDWORD)&mRecvFlags,
+                         (sockaddr *)msg.msg_name, &msg.msg_namelen,
+                         nullptr, nullptr);
+
+   if (rc == SOCKET_ERROR)
+      return -1;
+
+   return nbBytesRecvd;
+#endif
 }

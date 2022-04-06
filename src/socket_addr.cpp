@@ -223,6 +223,25 @@ std::string IfName(const std::string& ipAddr)
 }
 
 /**
+ * @brief Convert an interface index into a interface name.
+ * 
+ * @param ifIndex : The index of an interface.
+ * @return std::string : The interface name or an empty string.
+ */
+std::string IfName(int ifIndex)
+{
+   std::string ifName;
+#ifdef OS_UNIX
+   char buff[IF_NAMESIZE] = {};
+   if ( if_indextoname(ifIndex , buff) != nullptr)
+      ifName.append(buff);
+#elif defined OS_WINDOWS
+  // ToDo : https://docs.microsoft.com/en-us/windows/win32/api/netioapi/nf-netioapi-if_indextoname
+#endif
+   return ifName;
+}
+
+/**
  * @brief Convert an interface name to an ip address.
  * 
  * @param ifName : The name of an interface.
@@ -344,7 +363,7 @@ int IfIndex(const std::string& IfName)
    return (rc == 0) ? -1 : rc;
 
 #elif defined OS_WINDOWS
-
+  // ToDo try if_nametoindex : https://docs.microsoft.com/en-us/windows/win32/api/netioapi/nf-netioapi-if_nametoindex
    ULONG rc = NO_ERROR;
    ULONG buffSize = 15000;
    UINT it = 1;

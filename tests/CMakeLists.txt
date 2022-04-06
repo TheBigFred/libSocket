@@ -46,7 +46,7 @@ target_include_directories(${PROJECT_TESTS}
 
 target_link_libraries(${PROJECT_TESTS}
    PRIVATE
-      ${LIBNAME_SHARED}
+      ${LIBNAME_STATIC}
       gtest
 )
 
@@ -74,7 +74,7 @@ foreach(item ${binaries})
    )
 
    target_link_libraries(${item}
-      PRIVATE ${LIBNAME_SHARED}
+      PRIVATE ${LIBNAME_STATIC}
    )
 
 endforeach(item)
