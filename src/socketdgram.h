@@ -18,6 +18,7 @@ class LIBSOCKET_EXPORT SocketDGRAM : public Socket
 {
 public:
    SocketDGRAM(int domain = AF_UNSPEC, int proto = IPPROTO_UDP);
+   SocketDGRAM(int domain, int type, int proto);
    ~SocketDGRAM();
 
    int enableBroadcast() noexcept;
@@ -27,8 +28,6 @@ public:
    int igmpJoin(const std::string &GroupAddr, int IfIndex);
    int igmpJoin(const std::string &sourceAddr, const std::string &GroupAddr, int IfIndex);
    int igmpLeave();
-
-   socketaddr getSocketaddr() const noexcept;
 
    int send(const msghdr &message) const;
    int send(const void *buffer, uint32_t size) const noexcept override;

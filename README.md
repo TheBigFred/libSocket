@@ -36,7 +36,7 @@ This library use cmake.
    The lib provide a cmake package and is found with find_package(libSocket). Available targets are: _Socket-static_ and _Socket-shared_.
 
 * Either you include the sources in a subfolder of your project and you include it with an _add_subdirectory_.
-   The libSocket CMakeLists is written carrefully to be added in a parent CMakeLists.
+   The libSocket CMakeLists is written carefully to be added in a parent CMakeLists.
 
 Two cmake options are available:
 

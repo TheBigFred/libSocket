@@ -28,6 +28,17 @@ SocketDGRAM::SocketDGRAM(int domain, int proto) : Socket(domain, SOCK_DGRAM, pro
 {
 }
 
+/**
+ * @brief Construct a new SocketDGRAM object.
+ * 
+ * @param domain : AF_INET for IPV4, AF_INET6 for IPV6, AF_UNSPEC for autodetect.
+ * @param type : SOCK_DGRAM or a valid SOCK_xxxx.
+ * @param proto : IPPROTO_UDP, or a valid IPPROTO_xxxx.
+ */
+SocketDGRAM::SocketDGRAM(int domain, int type, int proto) : Socket(domain, type, proto)
+{
+}
+
 SocketDGRAM::~SocketDGRAM()
 {
    igmpLeave();
@@ -57,7 +68,7 @@ int SocketDGRAM::setMulticastTTL(uint8_t ttl) noexcept
 }
 
 /**
- * @brief Enable the port ruese socket option.
+ * @brief Enable the port reuse socket option.
  *
  * Under UNIX like, we set the SO_REUSEPORT socket option.
  * Under winsoc,  we set the SO_REUSEADDR socket option.
@@ -154,64 +165,6 @@ int SocketDGRAM::igmpLeave()
    return rc;
 }
 
-/**
- * @brief Readback the socket address.
- *
- * @return socketaddr : the current socketaddr value.
- */
-socketaddr SocketDGRAM::getSocketaddr() const noexcept
-{
-   return mAddr;
-}
-
-/**
- * @brief Scatter / Gather
- *
- * This method encpasulates the sendmsg BSD system call and
- * the winsoc WSASendMsg. 
- *
- * The winsoc API does not use the msghdr struct,
- * thus we have to translate msghdr sturct to WSAMSG struct.
- * To avoid dynamic allocation, we use a fix array of 10 WSABUFF.
- * You can override this WSABUFF_ARRAY_SIZE in the cmake cache.
- * 
- * @param msg : the buffers collection to send.
- * @return int : zero on success.
- */
-int SocketDGRAM::send(const msghdr &msg) const
-{
-#ifdef OS_UNIX
-   return sendmsg(mSock, &msg, mSendFlags);
-#elif defined OS_WINDOWS
-
-   if (WSABUFF_ARRAY_SIZE < msg.msg_iovlen)
-      return -1;
-
-   WSAMSG Msg = {};
-   Msg.name = (LPSOCKADDR)msg.msg_name;
-   Msg.namelen = msg.msg_namelen;
-   Msg.Control.buf = (char *)msg.msg_control;
-   Msg.Control.len = msg.msg_controllen;
-
-   WSABUF piov[WSABUFF_ARRAY_SIZE];
-   for (uint32_t i = 0; i < msg.msg_iovlen; i++)
-   {
-      piov[i].buf = (char *)msg.msg_iov[i].iov_base;
-      piov[i].len = msg.msg_iov[i].iov_len;
-   }
-   Msg.lpBuffers = piov;
-   Msg.dwBufferCount = msg.msg_iovlen;
-   Msg.dwFlags = msg.msg_flags;
-
-   DWORD nbBytesSent = 0;
-   auto rc = WSASendMsg(mSock, &Msg, mSendFlags, &nbBytesSent, nullptr, nullptr);
-
-   if (rc == SOCKET_ERROR)
-      return -1;
-   return nbBytesSent;
-#endif
-}
-
 int SocketDGRAM::send(const void *buffer, uint32_t size) const noexcept
 {
    if (buffer == nullptr || size == 0)
@@ -276,46 +229,6 @@ int SocketDGRAM::send(int64_t data) const noexcept
 {
    int64_t d = htonll(data);
    return sendto(mSock, CPCHAR_WSCAST(&d), sizeof(int64_t), mSendFlags, &mAddr.sa, mAddr.size);
-}
-
-/**
- * @brief Scatter / Gather
- *
- * This method encpasulates the recvmsg BSD system call and
- * the winsoc WSARecvFrom. 
- *
- * The winsoc API does not use the msghdr struct,
- * thus we have to translate msghdr sturct to WSAMSG struct.
- * To avoid dynamic allocation, we use a fix array of 10 WSABUFF.
- * You can override this WSABUFF_ARRAY_SIZE in the cmake cache.
- * 
- * @param msg : the buffers collection.
- * @return int : zero on success.
- */
-int SocketDGRAM::recv(struct msghdr &msg)
-{
-#ifdef OS_UNIX
-   return recvmsg(mSock, &msg, mRecvFlags);
-#elif defined OS_WINDOWS
-
-   WSABUF piov[WSABUFF_ARRAY_SIZE] = {};
-   for (uint32_t i = 0; i < msg.msg_iovlen; i++)
-   {
-      piov[i].buf = (char *)msg.msg_iov[i].iov_base;
-      piov[i].len = msg.msg_iov[i].iov_len;
-   }
-
-   DWORD nbBytesRecvd = 0;
-   auto rc = WSARecvFrom(mSock, piov, msg.msg_iovlen,
-                         &nbBytesRecvd, (LPDWORD)&mRecvFlags,
-                         (sockaddr *)msg.msg_name, &msg.msg_namelen,
-                         nullptr, nullptr);
-
-   if (rc == SOCKET_ERROR)
-      return -1;
-
-   return nbBytesRecvd;
-#endif
 }
 
 int SocketDGRAM::recv(void *buffer, uint32_t size) noexcept

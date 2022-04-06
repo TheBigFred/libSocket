@@ -18,6 +18,7 @@ class LIBSOCKET_EXPORT SocketSTREAM : public Socket
 {
 public:
    SocketSTREAM(int domain = AF_UNSPEC, int proto = IPPROTO_TCP);
+   SocketSTREAM(int domain, int type, int proto);
    SocketSTREAM(const SocketSTREAM &) = default;
    ~SocketSTREAM() = default;
 
