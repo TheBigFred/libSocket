@@ -18,7 +18,7 @@
 #include "socketdgram.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-int multicastSender(const std::string &group, uint16_t port)
+int multicastSender(int ifIndex, const std::string &group, uint16_t port, int multicastLoop)
 {
    auto socket = SocketDGRAM();
 
@@ -37,6 +37,25 @@ int multicastSender(const std::string &group, uint16_t port)
          std::cout << "open failed " << socket.error() << std::endl;
          return 1;
       }
+      
+      if (ifIndex >= 0)
+      {
+        auto ifaddr = SockAddr( IpAddr(IfName(ifIndex)) );
+        if (socket.setOption(IPPROTO_IP, IP_MULTICAST_IF, (void*)&(ifaddr.s4.sin_addr), sizeof(ifaddr.s4.sin_addr)) == -1)
+        {
+          std::cout << "setOption IP_MULTICAST_IF failed " << socket.error() << std::endl;
+          return 1;
+        }
+      }
+
+      if (multicastLoop >= 0)
+      {
+        if (socket.setOption(IPPROTO_IP, IP_MULTICAST_LOOP, (void*)&multicastLoop, sizeof(multicastLoop)) == -1)
+        {
+          std::cout << "setOption IP_MULTICAST_LOOP failed " << socket.error() << std::endl;
+          return 1;
+        }
+      }
 
       constexpr int len = 1500;
       char buf[len];
@@ -46,7 +65,7 @@ int multicastSender(const std::string &group, uint16_t port)
          snprintf(buf, len, "Hello from %s count %d", group.c_str(), n++);
          if (socket.send(buf, (int)strlen(buf) + 1) == -1)
          {
-            std::cout << "send failed\n";
+            std::cout << "send failed " << strerror(socket.error()) << std::endl;
             return 1;
          }
          std::cout << buf << std::endl;
@@ -61,13 +80,17 @@ int multicastSender(const std::string &group, uint16_t port)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int multicastReceiver(const std::string &IfIndex, const std::string &group, uint16_t port)
+int multicastReceiver(int IfIndex, const std::string &group, uint16_t port)
 {
    try
    {
       auto socket = SocketDGRAM(AF_INET);
 
-      int rc = socket.setAnyAddr(port);
+#if defined(_WIN32) || defined(WIN32)
+      int rc = socket.setAnyAddr(AF_INET,port);
+#else
+      int rc = socket.setAddr(group, port);
+#endif
       if (rc == -1)
       {
          std::cout << "setAddr failed" << std::endl;
@@ -88,16 +111,13 @@ int multicastReceiver(const std::string &IfIndex, const std::string &group, uint
          return 1;
       }
 
-      rc = socket.bind();
-      if (rc == -1)
+      if (socket.bind() == -1)
       {
          std::cout << "bind failed " << socket.error() << std::endl;
          return 1;
       }
 
-      auto index = std::atoi(IfIndex.c_str());
-      rc = socket.igmpJoin(group, index);
-      if (rc == -1)
+      if (socket.igmpJoin(group, IfIndex) == -1)
       {
          std::cout << "Igmp Join failed " << socket.error() << std::endl;
          return 1;
@@ -123,8 +143,8 @@ int multicastReceiver(const std::string &IfIndex, const std::string &group, uint
 void usage()
 {
    std::cout << "Usage\n";
-   std::cout << "  multicast --send GroupAddr Port\n",
-       std::cout << "  multicast --recv GroupAddr Port IfIndex\n";
+   std::cout << "  multicast --send GroupAddr Port IfIndex [--noloop]\n",
+   std::cout << "  multicast --recv GroupAddr Port IfIndex\n";
    std::cout << "      receive multicast on the designated interface\n\n";
 }
 
@@ -136,17 +156,23 @@ int main(int argc, char **argv)
       return 1;
    }
 
-   if (argc >= 3)
+   if (argc >= 5)
    {
       if (strcmp(argv[1], "--send") == 0)
       {
-         return multicastSender(argv[2], std::atoi(argv[3]));
+         int loop=1;
+         if (argc >= 6) {
+            if (strcmp(argv[5],"--noloop") == 0)
+               loop=0;
+         }
+         auto index = std::atoi(argv[4]);
+         return multicastSender(index, argv[2], std::atoi(argv[3]),loop);
       }
 
-      if ((strcmp(argv[1], "--recv") == 0) && argc >= 4)
+      if ((strcmp(argv[1], "--recv") == 0) && argc >= 5)
       {
-
-         return multicastReceiver(argv[4], argv[2], std::atoi(argv[3]));
+         auto index = std::atoi(argv[4]);
+         return multicastReceiver(index, argv[2], std::atoi(argv[3]));
       }
 
       usage();

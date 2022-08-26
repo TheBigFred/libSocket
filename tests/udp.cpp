@@ -16,6 +16,7 @@
 #include <cstring>
 #include <iostream>
 #include <iomanip>
+#include <sys/ioctl.h>
 #include "socketdgram.h"
 
 void printSocketaddr(const socketaddr &saddr)
@@ -32,7 +33,7 @@ void printSocketaddr(const socketaddr &saddr)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int udpSender(const std::string &IpAddr, uint16_t port)
+int udpSender(const std::string &IpAddr, uint16_t port,int ifIndex)
 {
    try
    {
@@ -49,6 +50,14 @@ int udpSender(const std::string &IpAddr, uint16_t port)
       if (src == INVALID_SOCKET)
       {
          std::cout << "open failed " << socket.error() << std::endl;
+         return 1;
+      }
+      
+      auto ifname = IfName(ifIndex);
+      rc = socket.setOption(SOL_SOCKET, SO_BINDTODEVICE, ifname.c_str(), ifname.size());
+      if (rc != 0)
+      {
+         std::cout << "setOption SO_BINDTODEVICE failed " << socket.error() << std::endl;
          return 1;
       }
 
@@ -142,7 +151,7 @@ int udpReceiver(uint16_t port)
 void usage()
 {
    std::cout << "Usage\n";
-   std::cout << "  udp --send  IP_Address port\n",
+   std::cout << "  udp --send  IP_Address port IfIndex\n",
        std::cout << "      send datagram on the IP_Address\n\n";
    std::cout << "  udp --recv port\n";
    std::cout << "      receive datagram\n\n";
@@ -156,9 +165,9 @@ int main(int argc, char **argv)
       return 1;
    }
 
-   if ((strcmp(argv[1], "--send") == 0) && argc == 4)
+   if ((strcmp(argv[1], "--send") == 0) && argc == 5)
    {
-      return udpSender(std::string(argv[2]), std::atoi(argv[3]));
+      return udpSender(std::string(argv[2]), std::atoi(argv[3]), std::atoi(argv[4]));
    }
 
    if ((strcmp(argv[1], "--recv") == 0) && argc == 3)

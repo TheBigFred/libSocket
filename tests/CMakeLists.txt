@@ -58,6 +58,7 @@ list(APPEND binaries
    udp
    multicast
    broadcast
+   raw
 )
 
 foreach(item ${binaries})
