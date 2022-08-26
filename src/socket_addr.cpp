@@ -15,9 +15,11 @@
 
 #include "platform.h"
 #include "socket_addr.h"
+#include "socketdgram.h"
 
 #ifdef OS_UNIX
 #   include <sys/types.h>
+#   include <sys/ioctl.h>
 #   include <ifaddrs.h>
 #endif
 
@@ -402,4 +404,29 @@ int IfIndex(const std::string& IfName)
    HeapFree(GetProcessHeap(), 0, pAddresses);
 #endif
    return -1;
+}
+
+socketaddr MacAddr(const std::string& IfName)
+{
+  socketaddr macAddr={};
+#ifdef OS_UNIX
+
+   ifreq request = {};
+   strncpy(request.ifr_name,IfName.c_str(),IFNAMSIZ-1);
+
+   auto rawSocket = SocketDGRAM(AF_PACKET,SOCK_RAW,IPPROTO_RAW);
+   auto sockethandler = rawSocket.open();
+   if (sockethandler  == INVALID_SOCKET)
+     throw std::system_error(rawSocket.error(), std::system_category(), "Can not open raw socket");
+
+   if((ioctl(sockethandler,SIOCGIFHWADDR,&request))<0)
+     throw std::system_error(errno, std::system_category(), "Can not ioctl SIOCGIFHWADDR");
+
+   macAddr.sa = request.ifr_hwaddr;
+
+#elif defined OS_WINDOWS
+   // ToDo GetAdaptersInfo https://docs.microsoft.com/en-us/windows/win32/api/iphlpapi/nf-iphlpapi-getadaptersinfo
+#endif
+
+   return macAddr;
 }

@@ -38,3 +38,4 @@ std::string LIBSOCKET_EXPORT IfName(const std::string& ipAddr);
 std::string LIBSOCKET_EXPORT IfName(int IfIndex);
 std::string LIBSOCKET_EXPORT IpAddr(const std::string& ifName, int domain=AF_INET);
 int         LIBSOCKET_EXPORT IfIndex(const std::string& IfName);
+socketaddr  LIBSOCKET_EXPORT MacAddr(const std::string& IfName);
