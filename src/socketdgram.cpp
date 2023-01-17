@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <system_error>
 
-#include "endian.h"
+#include "_endian.h"
 #include "socketdgram.h"
 
 /**
