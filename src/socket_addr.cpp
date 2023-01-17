@@ -407,7 +407,7 @@ int IfIndex(const std::string& IfName)
    return -1;
 }
 
-socketaddr MacAddr(const std::string& IfName)
+socketaddr MacAddr_fromIfName(const std::string& IfName)
 {
   socketaddr macAddr={};
 #ifdef OS_UNIX
@@ -424,10 +424,22 @@ socketaddr MacAddr(const std::string& IfName)
      throw std::system_error(errno, std::system_category(), "Can not ioctl SIOCGIFHWADDR");
 
    macAddr.sa = request.ifr_hwaddr;
+   macAddr.size = sizeof(macAddr.sa);
 
 #elif defined OS_WINDOWS
    // ToDo GetAdaptersInfo https://docs.microsoft.com/en-us/windows/win32/api/iphlpapi/nf-iphlpapi-getadaptersinfo
 #endif
 
+   return macAddr;
+}
+
+socketaddr MacAddr_fromString(const std::string& macStr)
+{
+   socketaddr macAddr = {};
+   auto* d = macAddr.sa.sa_data;
+   int rc = std::sscanf(macStr.c_str(), "%02x:%02x:%02x:%02x:%02x:%02x",
+               &d[0], &d[1], &d[2],&d[3], &d[4], &d[5]);
+   if (rc == 6)
+      macAddr.size = sizeof(macAddr.sa);
    return macAddr;
 }

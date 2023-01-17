@@ -27,6 +27,8 @@
 #   include <arpa/inet.h>
 #   include <netinet/in.h>
 #   include <sys/socket.h>
+#   include <linux/if_ether.h>
+#   include <linux/if_packet.h>
     using  SOCKET = int;
 
 #   define INVALID_SOCKET -1

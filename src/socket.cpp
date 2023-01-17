@@ -43,6 +43,7 @@ Socket::Socket(int domain, int type, int proto) : Socket()
    mType = type;
    mProto = proto;
    mSock = INVALID_SOCKET;
+   mAddr.sa.sa_family = domain;
 }
 
 Socket::~Socket()
@@ -170,6 +171,13 @@ int Socket::setAddr(const sockaddr_in &sa) noexcept
 int Socket::setAddr(const sockaddr_in6 &sa) noexcept
 {
    mAddr.s6 = sa;
+   mAddr.size = sizeof(sa);
+   return 0;
+}
+
+int Socket::setAddr(const sockaddr_ll& sa) noexcept
+{
+   mAddr.ll = sa;
    mAddr.size = sizeof(sa);
    return 0;
 }
