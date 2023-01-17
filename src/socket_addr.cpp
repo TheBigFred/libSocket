@@ -12,6 +12,7 @@
 
 #include <regex>
 #include <string>
+#include <system_error>
 
 #include "platform.h"
 #include "socket_addr.h"
