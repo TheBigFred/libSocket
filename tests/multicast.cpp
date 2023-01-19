@@ -17,6 +17,19 @@
 #include <iostream>
 #include "socketdgram.h"
 
+int setPattern(char* buff, int size, uint32_t pattern)
+{
+   if (buff == nullptr)
+      return 0;
+
+   uint32_t* ptr = (uint32_t *)buff;
+   for (int i = 0; i < sizeof(buff) / sizeof(pattern); i++)
+   {
+      ptr[i] = pattern;
+   }
+   return size - (size%sizeof(pattern));
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 int multicastSender(int ifIndex, const std::string &group, uint16_t port, int multicastLoop)
 {
@@ -57,8 +70,24 @@ int multicastSender(int ifIndex, const std::string &group, uint16_t port, int mu
         }
       }
 
-      constexpr int len = 1500;
-      char buf[len];
+      if (ifIndex >= 0)
+      {
+        auto ifaddr = SockAddr( IpAddr(IfName(ifIndex)) );
+        if (socket.setOption(IPPROTO_IP, IP_MULTICAST_IF, (void*)&(ifaddr.s4.sin_addr), sizeof(ifaddr.s4.sin_addr)) == -1)
+        {
+         std::cout << "setOption IP_MULTICAST_IF failed " << socket.error() << std::endl;
+         return 1;
+        }
+      }
+
+      if (socket.setOption(IPPROTO_IP, IP_MULTICAST_LOOP, (void*)&multicastLoop, sizeof(multicastLoop)) == -1)
+      {
+         std::cout << "setOption IP_MULTICAST_LOOP failed " << socket.error() << std::endl;
+         return 1;
+      }
+
+      char buf[1500];
+      int len = setPattern(buf, sizeof(buf), 0x55AAAA55);
       int n = 0;
       do
       {
