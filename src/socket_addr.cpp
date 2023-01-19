@@ -438,7 +438,8 @@ socketaddr MacAddr_fromString(const std::string& macStr)
    socketaddr macAddr = {};
    auto* d = macAddr.sa.sa_data;
    int rc = std::sscanf(macStr.c_str(), "%02x:%02x:%02x:%02x:%02x:%02x",
-               &d[0], &d[1], &d[2],&d[3], &d[4], &d[5]);
+               (int*)&d[0],(int*)&d[1],(int*)&d[2],
+               (int*)&d[3],(int*)&d[4],(int*)&d[5]);
    if (rc == 6)
       macAddr.size = sizeof(macAddr.sa);
    return macAddr;
