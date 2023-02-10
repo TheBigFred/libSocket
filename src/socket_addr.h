@@ -25,8 +25,10 @@ struct socketaddr {
       struct sockaddr         sa;
       struct sockaddr_in      s4;
       struct sockaddr_in6     s6;
+      struct sockaddr_storage ss;      
+#ifdef OS_UNIX      
       struct sockaddr_ll      ll;
-      struct sockaddr_storage ss;
+#endif
    };
    socklen_t size;
 

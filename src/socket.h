@@ -32,7 +32,9 @@ public:
    int setAddr(const socketaddr &sa) noexcept;
    int setAddr(const sockaddr_in &sa) noexcept;
    int setAddr(const sockaddr_in6 &sa) noexcept;
+#ifdef OS_UNIX   
    int setAddr(const sockaddr_ll &sa) noexcept;
+#endif
    int setAddr(int domain, const std::string &, uint16_t port) noexcept;
    int setAddr(const std::string &, uint16_t port) noexcept;
    int bind() noexcept;

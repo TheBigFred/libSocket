@@ -15,10 +15,10 @@ function(${PROJECT_NAME}_build_flags target_name)
    # CFLAGS & CXXFLAGS
    target_compile_options(${target_name}
       PRIVATE
-         $<$<CXX_COMPILER_ID:CMAKE_GNU_COMPILER_ID>:-Wall -Wextra -fmessage-length=0>
-         $<$<CXX_COMPILER_ID:CMAKE_MSVC_COMPILER_ID>:>
-         $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:CMAKE_GNU_COMPILER_ID>>:-O0 -ggdb>
-         $<$<AND:$<CONFIG:RELEASE>,$<CXX_COMPILER_ID:CMAKE_GNU_COMPILER_ID>>:-O3 -ggdb>
+         $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -fmessage-length=0>
+         $<$<CXX_COMPILER_ID:MSVC>:>
+         $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:GNU>>:-O0 -ggdb>
+         $<$<AND:$<CONFIG:RELEASE>,$<CXX_COMPILER_ID:GNU>>:-O3 -ggdb>
    )
 
    # Tell we need to use C++11

@@ -175,12 +175,14 @@ int Socket::setAddr(const sockaddr_in6 &sa) noexcept
    return 0;
 }
 
+#ifdef OS_UNIX
 int Socket::setAddr(const sockaddr_ll& sa) noexcept
 {
    mAddr.ll = sa;
    mAddr.size = sizeof(sa);
    return 0;
 }
+#endif
 
 /**
  * @brief Try to convert the tuple node, port to a valid sockaddr.
