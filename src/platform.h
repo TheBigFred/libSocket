@@ -2,7 +2,7 @@
 // File      : platform.h
 // Content   : define OS_UNIX or OS_WINDOWS
 //
-// Author(s) : Frederic Gerard - mailfge@gmail.com
+// Author    : TheBigFred - thebigfred.github@gmail.com
 // URL       : https://github.com/TheBigFred/libSocket
 //
 //-----------------------------------------------------------------------------

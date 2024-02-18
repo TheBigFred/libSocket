@@ -2,7 +2,7 @@
 // File      : raw.cpp
 // Contents  : raw test application
 //
-// Author(s) : Frederic Gerard - mailfge@gmail.com
+// Author    : TheBigFred - thebigfred.github@gmail.com
 // URL       : https://github.com/TheBigFred/libSocket
 //
 //-----------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 ## File      : dependencies.cmake
 ## Contents  : cmake package configuration file
 ##
-## Author(s) : Frederic Gerard - mailfge@gmail.com
+## Author    : TheBigFred - thebigfred.github@gmail.com
 ## URL       : https://github.com/TheBigFred/libSocket
 ##
 ##-----------------------------------------------------------------------------

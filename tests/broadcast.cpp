@@ -2,7 +2,7 @@
 // File      : broadcast.cpp
 // Contents  : broadcast test application
 //
-// Author(s) : Frederic Gerard - mailfge@gmail.com
+// Author    : TheBigFred - thebigfred.github@gmail.com
 // URL       : https://github.com/TheBigFred/libSocket
 //
 //-----------------------------------------------------------------------------

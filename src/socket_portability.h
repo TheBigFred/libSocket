@@ -2,7 +2,7 @@
 // File      : socker_portability.h
 // Contents  : Things needed to make BSD sockets and the WinSoc2 API compatible
 //
-// Author(s) : Frederic Gerard - mailfge@gmail.com
+// Author    : TheBigFred - thebigfred.github@gmail.com
 // URL       : https://github.com/TheBigFred/libSocket
 //
 //-----------------------------------------------------------------------------
