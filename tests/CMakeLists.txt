@@ -10,7 +10,32 @@
 ##-----------------------------------------------------------------------------
 ################################################################################
 
-include(../cmake/googletest.cmake)
+# ==============================================================================
+# == Get & configure gtest, libconsole
+# ==============================================================================
+
+if (MSVC AND BUILD_SHARED_LIBS)
+   set(gtest_force_shared_crt ON CACHE BOOL "Prevent overriding the parent project's compiler/linker settings" FORCE)
+endif ()
+
+set(INSTALL_GTEST OFF)
+
+if (VCPKG_BUILD)
+
+   find_package(GTest CONFIG REQUIRED)
+
+else (VCPKG_BUILD)
+   
+   include(FetchContent)
+   FetchContent_Declare(
+      googletest
+         GIT_REPOSITORY https://github.com/google/googletest.git
+         GIT_TAG        v1.14.0                                   # last release to support C++11: release-1.12.1
+   )
+   FetchContent_MakeAvailable(googletest)
+
+endif(VCPKG_BUILD)
+
 
 # ==============================================================================
 # == Define the project targets
@@ -25,30 +50,30 @@ add_executable(${PROJECT_TESTS}
 )
 
 add_test(
-   NAME ${PROJECT_NAME}
+   NAME ${PROJECT_TESTS}
    COMMAND $<TARGET_FILE:${PROJECT_TESTS}>
 )
 
-# ==============================================================================
-# == Build flags
-# ==============================================================================
-
-libSocket_build_flags(${PROJECT_TESTS})
+set_build_flags(${PROJECT_TESTS})
 
 target_include_directories(${PROJECT_TESTS}
-   PUBLIC
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../src>
+   PRIVATE
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/${PROJECT_NAME}>
 )
-
-# ==============================================================================
-# == Linker
-# ==============================================================================
 
 target_link_libraries(${PROJECT_TESTS}
    PRIVATE
-      ${LIBNAME_STATIC}
-      gtest
+      ${PROJECT_NAME}
+      GTest::gtest
 )
+
+if (MSVC AND BUILD_SHARED_LIBS)
+   add_custom_command (TARGET ${PROJECT_TESTS} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different ${CMAKE_BINARY_DIR}/bin ${OUTPUT_DIRECTORY}/bin
+      COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different ${CMAKE_INSTALL_PREFIX}/bin ${OUTPUT_DIRECTORY}/bin/$<CONFIG>
+   )
+endif()
+
 
 # ==============================================================================
 # == binaries loop
@@ -67,31 +92,17 @@ foreach(item ${binaries})
       ${item}.cpp
    )
    
-   libSocket_build_flags(${item})
+   set_build_flags(${item})
 
    target_include_directories(${item}
-      PUBLIC
-         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../src>
+      PRIVATE
+         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/${PROJECT_NAME}>
    )
 
    target_link_libraries(${item}
-      PRIVATE ${LIBNAME_STATIC}
+      PRIVATE
+         ${PROJECT_NAME}
    )
 
 endforeach(item)
 
-
-# ==============================================================================
-# == Generate an archive.tar for the SocketSTREAM send_recv_file unittest
-# ==============================================================================
-
-if (MSVC)
-   set(EXTENSION ".exe")
-endif()
-
-add_custom_command (
-   TARGET ${PROJECT_TESTS} POST_BUILD
-   COMMAND tar -cf archive.tar ${PROJECT_TESTS}${EXTENSION}
-   DEPENDS
-   WORKING_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}
-)

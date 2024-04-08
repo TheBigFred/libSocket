@@ -10,28 +10,28 @@
 ##-----------------------------------------------------------------------------
 ################################################################################
 
-find_package(Perl QUIET)
-find_package(Doxygen QUIET)
+find_package(Perl REQUIRED)
+find_package(Doxygen REQUIRED)
 
-if (PERL_FOUND AND DOXYGEN_FOUND)
+set(DOXYGEN_PROJECT_NAME      ${PROJECT_NAME})
+set(DOXYGEN_PROJECT_VERSION   ${PROJECT_VERSION})
+set(DOXYGEN_OUTPUT_DIR)
+set(DOXYGEN_INPUT_DIR 
+   "${CMAKE_CURRENT_SOURCE_DIR} \
+   ${PROJECT_SOURCE_DIR}/src/${PROJECT_NAME}"
+)
+set(DOXYGEN_FRONT_PAGE        front_page.md)
 
-   set(DOXYGEN_PROJECT_NAME      ${PROJECT_NAME})
-   set(DOXYGEN_PROJECT_VERSION   ${PROJECT_VERSION})
-   set(DOXYGEN_OUTPUT_DIR        .)
-   set(DOXYGEN_INPUT_DIR        "${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/..")
-   set(DOXYGEN_FRONT_PAGE        front_page.md)
+configure_file(
+   ${PROJECT_SOURCE_DIR}/cmake/doxyfile.in
+   ${CMAKE_CURRENT_SOURCE_DIR}/doxyfile @ONLY
+)
 
-   configure_file(
-      ../cmake/Doxyfile.in
-      ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile @ONLY
-   )
-
-   add_custom_target(${PROJECT_NAME}-doxygen
-      COMMAND
-         ${DOXYGEN_EXECUTABLE}  ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
-      WORKING_DIRECTORY
-         ${CMAKE_CURRENT_SOURCE_DIR}
-      COMMENT
-         "Building HTML documentation with Doxygen"
-   )
-endif()
+add_custom_target(${PROJECT_NAME}-doxygen ALL
+   COMMAND
+      ${DOXYGEN_EXECUTABLE}  ${CMAKE_CURRENT_SOURCE_DIR}/doxyfile
+   WORKING_DIRECTORY
+      ${CMAKE_CURRENT_SOURCE_DIR}
+   COMMENT
+      "Building HTML documentation with Doxygen"
+)

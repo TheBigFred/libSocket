@@ -10,8 +10,25 @@
 ##-----------------------------------------------------------------------------
 ################################################################################
 
-#find_library( REQUIRED)
+list(APPEND @PROJECT_NAME_UUC@_TARGET_LIST
 
-list(APPEND DEP_LIBS
-#	
 )
+
+
+list(APPEND @PROJECT_NAME_UUC@_STRIPED_TARGET_LIST )
+list(APPEND @PROJECT_NAME_UUC@_DEP_LIST )
+
+
+foreach(item ${@PROJECT_NAME_UUC@_TARGET_LIST})
+
+  #strip namespace
+  string(FIND ${item} "::" matchPos)
+  if (NOT "${matchPos}" EQUAL "-1")
+    math(EXPR offset "${matchPos} + 2")
+    string(SUBSTRING ${item} ${offset} -1 item)
+  endif()
+
+  string(TOLOWER ${item} item_lc)
+  list(APPEND @PROJECT_NAME_UUC@_DEP_LIST ${item_lc})
+  list(APPEND @PROJECT_NAME_UUC@_STRIPED_TARGET_LIST ${item})
+endforeach()

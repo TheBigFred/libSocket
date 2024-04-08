@@ -23,7 +23,7 @@ int setPattern(char* buff, int size, uint32_t pattern)
       return 0;
 
    uint32_t* ptr = (uint32_t *)buff;
-   for (int i = 0; i < sizeof(buff) / sizeof(pattern); i++)
+   for (uint32_t i = 0; i < sizeof(buff) / sizeof(pattern); i++)
    {
       ptr[i] = pattern;
    }

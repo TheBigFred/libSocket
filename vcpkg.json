@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+  ],
+  "features": {
+    "tests": { "description": "Build tests", "dependencies": ["gtest"] }
+  },
+  "overrides": [
+    { "name": "gtest", "version": "1.14.0" }
+  ]
+}

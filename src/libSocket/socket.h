@@ -18,7 +18,7 @@
 #include "export.h"
 #include <string>
 
-class LIBSOCKET_EXPORT Socket
+class EXPORT Socket
 {
 public:
    Socket(int domain, int type, int proto = 0);

@@ -99,6 +99,7 @@ int Socket::close() noexcept
 /**
  * @brief set the internal sockaddr struct to ANY ADDR according to the domain.
  * 
+ * @param domain : AF_INET for IPV4, AF_INET6 for IPV6, AF_UNSPEC for autodetect.
  * @param port : the port to bind
  * @return int : zero on success.
  */

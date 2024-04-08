@@ -11,16 +11,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cstdint>
+#include "export.h"
 
 #cmakedefine USE_TWEAK_AS_DATE
 #cmakedefine USE_TWEAK
 
-namespace @PROJECT_NAME@ {
+namespace @PROJECT_NAME_UUC@ {
 
 #if defined(USE_TWEAK) && !defined(USE_TWEAK_AS_DATE)
-   void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date)
+EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date)
 #else
-   void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date)
+EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date)
 #endif
 {
    if(name)
@@ -53,7 +54,7 @@ namespace @PROJECT_NAME@ {
 #endif
 }
 
-const char* versionStr()
+EXPORT const char* versionStr()
 {
 #ifdef USE_TWEAK_AS_DATE
    return "@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@ - @PROJECT_VERSION_TWEAK@";
@@ -67,4 +68,4 @@ const char* versionStr()
 #endif
 }
 
-}  // namespace @PROJECT_NAME@
+}  // namespace @PROJECT_NAME_UUC@

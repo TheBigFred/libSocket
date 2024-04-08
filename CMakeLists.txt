@@ -10,51 +10,33 @@
 ##-----------------------------------------------------------------------------
 ################################################################################
 
-cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
 project(libSocket VERSION 0.0.0.0 LANGUAGES CXX)
 
-set(LIBNAME Socket)
-set(LIBNAME_STATIC ${LIBNAME}-static)
-set(LIBNAME_SHARED ${LIBNAME}-shared)
-
-string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LC)
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
 
 # ==============================================================================
-# == Standalone build or Global CMakeLists
+# == Setup Modules Path, default cmake flags & vars
 # ==============================================================================
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-   set(STANDALONE_${PROJECT_NAME} ON)
-   message(STATUS "** Standalone build **")
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_BINARY_DIR}/cmake)
+include(cmake_flags)
+
+if (PROJECT_IS_TOP_LEVEL)
+   include(cpack_)
 endif()
 
-# ==============================================================================
-# == Import Modules
-# ==============================================================================
-
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/build_flags.cmake)
-
-if (STANDALONE_${PROJECT_NAME})
-   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeCPack.cmake)
-endif()
-
-# ==============================================================================
-# == Default Build Type
-# ==============================================================================
-
-if (NOT CMAKE_BUILD_TYPE)
-   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
-endif()
 
 # ==============================================================================
 # == Options
 # ==============================================================================
 
-option(USE_TWEAK_AS_DATE            "Use project Tweak number as BCD date"  OFF)
-option(USE_TWEAK                    "Show project Tweak number in version fonction" OFF)
-option(ENABLE_TEST_${PROJECT_NAME}  "Enable Unit tests"                     OFF)
-option(ENABLE_DOC_${PROJECT_NAME}   "Generate Doxygen documentation"        OFF)
+option(USE_TWEAK_AS_DATE                "Use project Tweak number as BCD date"          OFF)
+option(USE_TWEAK                        "Show project Tweak number in version fonction" OFF)
+option(INSTALL_HEADER_ONLY              "Install only header files"         OFF)
+option(ENABLE_TEST_${PROJECT_NAME_UUC}  "Enable Unit tests"                 OFF)
+option(ENABLE_DOC_${PROJECT_NAME_UUC}   "Generate Doxygen documentation"    OFF)
 
 set(IGMP_REQ_ARRAY_SIZE 10 CACHE STRING "Igmp request array size")
 if (MSVC)
@@ -65,52 +47,18 @@ endif()
 # == Add Sources
 # ==============================================================================
 
-add_subdirectory(src)
+add_subdirectory(src/${PROJECT_NAME})
 
-if (ENABLE_TEST_${PROJECT_NAME})
+
+# ==============================================================================
+# == Optional targets
+# ==============================================================================
+
+if (ENABLE_TEST_${PROJECT_NAME_UUC})
    enable_testing()
    add_subdirectory(tests)
 endif()
 
-if (ENABLE_DOC_${PROJECT_NAME})
+if (ENABLE_DOC_${PROJECT_NAME_UUC})
    add_subdirectory(docs)
 endif()
-
-# ==============================================================================
-# == Create symlink from src to ${PROJET_NAME}
-# ==============================================================================
-
-if(NOT STANDALONE_${PROJECT_NAME})
-
-   if (NOT EXISTS  ${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME})
-
-      execute_process (
-         COMMAND ${CMAKE_COMMAND} -E create_symlink
-            ${CMAKE_CURRENT_LIST_DIR}/src
-            ${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}
-      )
-   endif()
-
-   if (NOT EXISTS  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME})
-
-      execute_process (
-         COMMAND ${CMAKE_COMMAND} -E create_symlink
-            ${CMAKE_CURRENT_BINARY_DIR}/src
-            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-      )
-   endif()
-
-endif()
-
-# ==============================================================================
-# == Remove generated docs & symlink
-# ==============================================================================
-
-add_custom_target(${PROJECT_NAME}-clean
-   COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile
-   COMMAND ${CMAKE_COMMAND} -E remove_directory -f ${CMAKE_CURRENT_SOURCE_DIR}/docs/html
-   COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}
-   COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_SOURCE_DIR}/config.h
-   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-

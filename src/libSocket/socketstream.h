@@ -14,7 +14,7 @@
 
 #include "socket.h"
 
-class LIBSOCKET_EXPORT SocketSTREAM : public Socket
+class EXPORT SocketSTREAM : public Socket
 {
 public:
    SocketSTREAM(int domain = AF_UNSPEC, int proto = IPPROTO_TCP);

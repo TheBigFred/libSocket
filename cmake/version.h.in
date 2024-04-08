@@ -10,24 +10,18 @@
 //-----------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef @PROJECT_NAME@_VERSION_H_
-#define @PROJECT_NAME@_VERSION_H_
-
-#cmakedefine USE_TWEAK_AS_DATE
-#cmakedefine USE_TWEAK
+#pragma once
 
 #include <cstdint>
-#include "export.h"
 
-namespace @PROJECT_NAME@
+namespace @PROJECT_NAME_UUC@
 {
 #if defined(USE_TWEAK) && !defined(USE_TWEAK_AS_DATE)
-   @PROJECT_NAME_UC@_EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date);
+   void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date);
 #else
-   @PROJECT_NAME_UC@_EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date);
+   void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date);
 #endif
 
-   @PROJECT_NAME_UC@_EXPORT const char* versionStr();
-}
+   const char* versionStr();
+}  // namespace @PROJECT_NAME_UUC@
 
-#endif /* @PROJECT_NAME@_LIBVERSION_H_ */
