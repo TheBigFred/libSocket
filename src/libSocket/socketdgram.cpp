@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <system_error>
 
+#include "config.h"
 #include "_endian.h"
 #include "socketdgram.h"
 
@@ -26,6 +27,16 @@
  */
 SocketDGRAM::SocketDGRAM(int domain, int proto) : Socket(domain, SOCK_DGRAM, proto)
 {
+   try
+   {
+      mpreq = new group_req[IGMP_REQ_ARRAY_SIZE];
+      mpreq_src = new group_source_req[IGMP_REQ_ARRAY_SIZE];
+   }
+   catch(const std::exception& e)
+   {
+      delete [] mpreq;
+      delete [] mpreq_src;
+   }
 }
 
 /**
@@ -42,6 +53,8 @@ SocketDGRAM::SocketDGRAM(int domain, int type, int proto) : Socket(domain, type,
 SocketDGRAM::~SocketDGRAM()
 {
    igmpLeave();
+   delete [] mpreq;
+   delete [] mpreq_src;
 }
 
 /**
@@ -103,9 +116,9 @@ int SocketDGRAM::igmpJoin(const std::string &GroupAddr, int IfIndex)
       if (saddr.size == 0)
          return -1;
 
-      mreq[mreq_cnt].gr_group = saddr.ss;
-      mreq[mreq_cnt].gr_interface = IfIndex;
-      int rc = setsockopt(mSock, IPPROTO_IP, MCAST_JOIN_GROUP, CPCHAR_WSCAST(&mreq[mreq_cnt]), sizeof(mreq[mreq_cnt]));
+      mpreq[mreq_cnt].gr_group = saddr.ss;
+      mpreq[mreq_cnt].gr_interface = IfIndex;
+      int rc = setsockopt(mSock, IPPROTO_IP, MCAST_JOIN_GROUP, CPCHAR_WSCAST(&mpreq[mreq_cnt]), sizeof(mpreq[mreq_cnt]));
       if (rc == 0)
          mreq_cnt++;
       return rc;
@@ -136,11 +149,11 @@ int SocketDGRAM::igmpJoin(const std::string &sourceAddr, const std::string &Grou
       if (srcAddr.size == 0)
          return -1;
 
-      mreq_src[mreq_src_cnt].gsr_group = GrpAddr.ss;
-      mreq_src[mreq_src_cnt].gsr_source = srcAddr.ss;
-      mreq_src[mreq_src_cnt].gsr_interface = IfIndex;
+      mpreq_src[mreq_src_cnt].gsr_group = GrpAddr.ss;
+      mpreq_src[mreq_src_cnt].gsr_source = srcAddr.ss;
+      mpreq_src[mreq_src_cnt].gsr_interface = IfIndex;
 
-      int rc = setsockopt(mSock, IPPROTO_IP, MCAST_JOIN_SOURCE_GROUP, CPCHAR_WSCAST(&mreq_src[mreq_src_cnt]), sizeof(mreq_src[mreq_src_cnt]));
+      int rc = setsockopt(mSock, IPPROTO_IP, MCAST_JOIN_SOURCE_GROUP, CPCHAR_WSCAST(&mpreq_src[mreq_src_cnt]), sizeof(mpreq_src[mreq_src_cnt]));
       if (rc == 0)
          mreq_src_cnt++;
       return rc;
@@ -157,10 +170,10 @@ int SocketDGRAM::igmpLeave()
 {
    int rc = 0;
    for (uint32_t i = 0; i < mreq_src_cnt; i++)
-      rc |= setsockopt(mSock, IPPROTO_IP, MCAST_LEAVE_SOURCE_GROUP, CPCHAR_WSCAST(&mreq_src[i]), sizeof(mreq_src[i]));
+      rc |= setsockopt(mSock, IPPROTO_IP, MCAST_LEAVE_SOURCE_GROUP, CPCHAR_WSCAST(&mpreq_src[i]), sizeof(mpreq_src[i]));
 
    for (uint32_t i = 0; i < mreq_cnt; i++)
-      rc |= setsockopt(mSock, IPPROTO_IP, MCAST_LEAVE_GROUP, CPCHAR_WSCAST(&mreq[i]), sizeof(mreq[i]));
+      rc |= setsockopt(mSock, IPPROTO_IP, MCAST_LEAVE_GROUP, CPCHAR_WSCAST(&mpreq[i]), sizeof(mpreq[i]));
 
    return rc;
 }

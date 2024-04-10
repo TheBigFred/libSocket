@@ -56,6 +56,6 @@ public:
 private:
    uint32_t mreq_cnt = 0;
    uint32_t mreq_src_cnt = 0;
-   group_req mreq[IGMP_REQ_ARRAY_SIZE] = {};
-   group_source_req mreq_src[IGMP_REQ_ARRAY_SIZE] = {};
+   group_req* mpreq = nullptr;
+   group_source_req* mpreq_src = nullptr;
 };

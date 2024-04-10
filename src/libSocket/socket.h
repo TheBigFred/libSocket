@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include "config.h"
 #include "socket_addr.h"
 #include "socket_portability.h"
 #include "export.h"
