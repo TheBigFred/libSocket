@@ -1,8 +1,8 @@
 ### folders ###
-**/build*
-**/install*
-**/_build*
-**/_install*
+**/build*/
+**/install*/
+**/_build*/
+**/_install*/
 .vscode
 docs/html
 
