@@ -19,12 +19,10 @@ project(libSocket VERSION 0.0.0.0 LANGUAGES CXX)
 # == Setup Modules Path, default cmake flags & vars
 # ==============================================================================
 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_BINARY_DIR}/cmake)
-include(cmake_flags)
+include(${PROJECT_SOURCE_DIR}/cmake/cmake_flags.cmake)
 
 if (PROJECT_IS_TOP_LEVEL)
-   include(cpack_)
+   include(${PROJECT_SOURCE_DIR}/cmake/cpack_.cmake)
 endif()
 
 

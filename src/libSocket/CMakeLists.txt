@@ -69,7 +69,7 @@ endforeach(item)
 # == Build flags
 # ==============================================================================
 
-include(build_flags)
+include(${PROJECT_SOURCE_DIR}/cmake/build_flags.cmake)
 set_build_flags(${PROJECT_NAME})
 
 
@@ -77,14 +77,14 @@ set_build_flags(${PROJECT_NAME})
 # == Generate files
 # ==============================================================================
 
-include(gen_files)
+include(${PROJECT_SOURCE_DIR}/cmake/gen_files.cmake)
 
 
 # ==============================================================================
 # == Linker
 # ==============================================================================
 
-include(dependencies)
+include(${PROJECT_BINARY_DIR}/cmake/dependencies.cmake)
 if(PROJECT_IS_TOP_LEVEL)
 
   foreach(dep ${${COMP_UUC}_DEP_LIST})
@@ -109,7 +109,7 @@ endif()
 # == Strip symboles
 # ==============================================================================
 
-include(strip_symboles)
+include(${PROJECT_SOURCE_DIR}/cmake/strip_symboles.cmake)
 strip_symboles(${PROJECT_NAME})
 
 
@@ -117,5 +117,5 @@ strip_symboles(${PROJECT_NAME})
 # == Install Directives
 # ==============================================================================
 
-include(install)
+include(${PROJECT_SOURCE_DIR}/cmake/install.cmake)
 
