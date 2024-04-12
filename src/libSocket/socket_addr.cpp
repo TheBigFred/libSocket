@@ -12,6 +12,7 @@
 
 #include <regex>
 #include <string>
+#include <cstring>
 #include <system_error>
 
 #include "platform.h"
