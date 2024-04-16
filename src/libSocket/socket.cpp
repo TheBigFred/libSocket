@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <system_error>
 
+#include "config.h"
 #include "socket.h"
 #include "socket_portability.h"
 
