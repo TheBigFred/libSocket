@@ -14,7 +14,7 @@
         "cacheVariables": {
           "CMAKE_INSTALL_PREFIX": "${sourceDir}/_install-${presetName}$env{configPostfix}",
           "CMAKE_PREFIX_PATH": "${sourceDir}/_install-${presetName}$env{configPostfix}",
-          "ENABLE_DOC_LIBSOCKET":  "ON",
+          "ENABLE_DOC_LIBSOCKET":  "OFF",
           "ENABLE_TEST_LIBSOCKET": "ON",
           "CMAKE_VERBOSE_MAKEFILE": "OFF"
         }
