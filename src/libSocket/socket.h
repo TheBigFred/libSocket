@@ -14,7 +14,7 @@
 
 #include "socket_addr.h"
 #include "socket_portability.h"
-#include "export.h"
+#include <libSocket/export.h>
 #include <string>
 
 class EXPORT Socket

@@ -17,7 +17,7 @@
 #include <iostream>
 
 #include "socket_portability.h"
-#include "export.h"
+#include <libSocket/export.h>
 
 /// A all in one sockaddr with size information.
 struct socketaddr {

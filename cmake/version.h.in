@@ -13,15 +13,16 @@
 #pragma once
 
 #include <cstdint>
+#include <libSocket/export.h>
 
 namespace @PROJECT_NAME_UUC@
 {
 #if defined(USE_TWEAK) && !defined(USE_TWEAK_AS_DATE)
-   void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date);
+   EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, uint32_t* tweak, const char** date);
 #else
-   void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date);
+   EXPORT void version(const char** name, uint32_t* major, uint32_t* minor, uint32_t* build, const char** date);
 #endif
 
-   const char* versionStr();
+   EXPORT const char* versionStr();
 }  // namespace @PROJECT_NAME_UUC@
 
