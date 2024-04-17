@@ -32,20 +32,20 @@ struct socketaddr {
    };
    socklen_t size;
 
-   void EXPORT setIPV4(const sockaddr_in& sa)  { s4 = sa, size=sizeof(sa); }
-   void EXPORT setIPV6(const sockaddr_in6& sa) { s6 = sa, size=sizeof(sa); }
+   void LIBSOCKET_EXPORT setIPV4(const sockaddr_in& sa)  { s4 = sa, size=sizeof(sa); }
+   void LIBSOCKET_EXPORT setIPV6(const sockaddr_in6& sa) { s6 = sa, size=sizeof(sa); }
 };
 
-int         EXPORT IpAddrDomain(const std::string& ipAddr);
-socketaddr  EXPORT SockAddr(const std::string& node, int domain = AF_UNSPEC);
-socketaddr  EXPORT SockAddr(const std::string& node, uint16_t port, int domain=AF_UNSPEC);
-socketaddr  EXPORT SockAddr(const std::string& node, uint16_t port, addrinfo&);
-std::string EXPORT IfName(const std::string& ipAddr);
-std::string EXPORT IfName(int IfIndex);
-std::string EXPORT IpAddr(const std::string& ifName, int domain=AF_INET);
-int         EXPORT IfIndex(const std::string& IfName);
-socketaddr  EXPORT MacAddr_fromIfName(const std::string& IfName);
-socketaddr  EXPORT MacAddr_fromString(const std::string& IfName);
+int         LIBSOCKET_EXPORT IpAddrDomain(const std::string& ipAddr);
+socketaddr  LIBSOCKET_EXPORT SockAddr(const std::string& node, int domain = AF_UNSPEC);
+socketaddr  LIBSOCKET_EXPORT SockAddr(const std::string& node, uint16_t port, int domain=AF_UNSPEC);
+socketaddr  LIBSOCKET_EXPORT SockAddr(const std::string& node, uint16_t port, addrinfo&);
+std::string LIBSOCKET_EXPORT IfName(const std::string& ipAddr);
+std::string LIBSOCKET_EXPORT IfName(int IfIndex);
+std::string LIBSOCKET_EXPORT IpAddr(const std::string& ifName, int domain=AF_INET);
+int         LIBSOCKET_EXPORT IfIndex(const std::string& IfName);
+socketaddr  LIBSOCKET_EXPORT MacAddr_fromIfName(const std::string& IfName);
+socketaddr  LIBSOCKET_EXPORT MacAddr_fromString(const std::string& IfName);
 
 
 ////////////////////////////////////////////////////////////////////////////////

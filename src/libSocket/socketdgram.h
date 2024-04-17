@@ -14,7 +14,7 @@
 
 #include "socket.h"
 
-class EXPORT SocketDGRAM : public Socket
+class LIBSOCKET_EXPORT SocketDGRAM : public Socket
 {
 public:
    SocketDGRAM(int domain = AF_UNSPEC, int proto = IPPROTO_UDP);

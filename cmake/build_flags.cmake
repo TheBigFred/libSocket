@@ -76,7 +76,7 @@ function(set_build_flags target_name)
    else()
       target_compile_definitions(${target_name}
          PRIVATE
-            STATIC_DEFINE
+         ${PROJECT_NAME_UUC}_STATIC_DEFINE
       )
 
    endif()
