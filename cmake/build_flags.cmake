@@ -28,19 +28,19 @@ function(set_build_flags target_name)
       target_compile_options(${target_name}
          PRIVATE
             $<$<CXX_COMPILER_ID:MSVC>:>
-            $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>: /MTd>
-            $<$<AND:$<CONFIG:Release>,$<CXX_COMPILER_ID:MSVC>>: /MT /O2>
-            $<$<AND:$<CONFIG:MinSizeRel>,$<CXX_COMPILER_ID:MSVC>>: /MT /O1>
-            $<$<AND:$<CONFIG:RelWithDebInfo>,$<CXX_COMPILER_ID:MSVC>>: /MT /O2>
+            $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>: /MDd>
+            $<$<AND:$<CONFIG:Release>,$<CXX_COMPILER_ID:MSVC>>: /MD /O2>
+            $<$<AND:$<CONFIG:MinSizeRel>,$<CXX_COMPILER_ID:MSVC>>: /MD /O1>
+            $<$<AND:$<CONFIG:RelWithDebInfo>,$<CXX_COMPILER_ID:MSVC>>: /MD /O2>
       )
    else()
       target_compile_options(${target_name}
          PRIVATE
             $<$<CXX_COMPILER_ID:MSVC>:>
-            $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>: /MDd>
-            $<$<AND:$<CONFIG:Release>,$<CXX_COMPILER_ID:MSVC>>: /MD /O2>
-            $<$<AND:$<CONFIG:MinSizeRel>,$<CXX_COMPILER_ID:MSVC>>: /MD /O1>
-            $<$<AND:$<CONFIG:RelWithDebInfo>,$<CXX_COMPILER_ID:MSVC>>: /MD /O2>
+            $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>: /MTd>
+            $<$<AND:$<CONFIG:Release>,$<CXX_COMPILER_ID:MSVC>>: /MT /O2>
+            $<$<AND:$<CONFIG:MinSizeRel>,$<CXX_COMPILER_ID:MSVC>>: /MT /O1>
+            $<$<AND:$<CONFIG:RelWithDebInfo>,$<CXX_COMPILER_ID:MSVC>>: /MT /O2>
       )
    endif()
 
