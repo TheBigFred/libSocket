@@ -51,7 +51,7 @@ function(set_build_flags target_name)
 
    set_target_properties(${target_name}
       PROPERTIES
-         CXX_STANDARD                 17
+         CXX_STANDARD                 11
          CXX_STANDARD_REQUIRED        YES
          POSITION_INDEPENDENT_CODE    YES
          WINDOWS_EXPORT_ALL_SYMBOLS   OFF
