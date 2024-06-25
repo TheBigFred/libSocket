@@ -30,7 +30,7 @@ else (VCPKG_BUILD)
    FetchContent_Declare(
       googletest
          GIT_REPOSITORY https://github.com/google/googletest.git
-         GIT_TAG        release-1.12.1                                   # last release to support C++11: release-1.12.1
+         GIT_TAG        release-1.8.1
    )
    FetchContent_MakeAvailable(googletest)
 
@@ -64,7 +64,7 @@ target_include_directories(${PROJECT_TESTS}
 target_link_libraries(${PROJECT_TESTS}
    PRIVATE
       ${PROJECT_NAME}
-      GTest::gtest
+      gtest
 )
 
 if (MSVC AND BUILD_SHARED_LIBS)
